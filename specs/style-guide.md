@@ -1,4 +1,4 @@
-# Hubert Style Guide
+# Style Guide
 
 Coding standards and best practices for the Indexr codebase.
 
