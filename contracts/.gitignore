@@ -1,0 +1,13 @@
+# Foundry
+out/
+cache/
+broadcast/
+lib/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+

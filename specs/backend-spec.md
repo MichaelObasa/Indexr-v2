@@ -21,14 +21,35 @@ All services are stateless where possible, with database persistence for EchoPay
 - [ ] Webhook endpoints (if needed)
 - [ ] Error handling and validation
 
-### TODO: EchoPay Scheduler
-- [ ] Cron job configuration
-- [ ] Plan execution logic
+### EchoPay Module (internal for now)
+
+- Located under `/backend/echopay` (or similar).
+- Responsibilities:
+  - CRUD for auto-invest plans (create, list, pause, cancel).
+  - Scheduler job that:
+    - reads active plans
+    - checks USDC balance for each wallet
+    - triggers a deposit into the target BasketVault when funds are sufficient
+    - records success/failure
+  - Notification hooks (e.g. low balance, plan executed).
+- It must call a separate on-chain client service, e.g. `IndexrOnchainClient`, instead of talking to contracts directly.
+- Phase 1 constraints:
+  - No fiat integrations, no Open Banking, no VRP.
+  - USDC-only, Arbitrum-only.
+- Future requirement:
+  - Design the interfaces so this module can be extracted into a standalone EchoPay service in the future.
+
+#### TODO: EchoPay Implementation Details
+- [ ] Module structure and organization
+- [ ] Plan CRUD API endpoints
+- [ ] Scheduler job configuration
 - [ ] Balance checking on Arbitrum
+- [ ] Integration with IndexrOnchainClient
 - [ ] Transaction triggering mechanism
 - [ ] USDC approval handling
 - [ ] Next run date calculation
 - [ ] Error handling and retries
+- [ ] Notification hooks implementation
 
 ### TODO: Database Schema
 - [ ] `baskets` table/collection structure

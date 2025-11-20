@@ -26,54 +26,38 @@ EchoPay is the **recurring investing engine** that sits behind Indexr. It:
 Everything in Phase 1 is:
 
 - **On-chain first**: deposits, withdrawals, and rebalancing are handled via smart contracts on Arbitrum.
-
 - **Non-custodial**: users always interact from their own wallets.
-
 - **USDC-centric**: all deposits into baskets are in USDC to keep logic simple and predictable.
-
 - **Oracles + DEX**: on-chain price feeds (Pyth / Chainlink) + DEX routes (e.g. Uniswap on Arbitrum) are used for rebalancing.
 
 ## 2. Core Principles
 
 1. **Non-custodial**
-
    - Indexr and EchoPay never hold user funds or private keys.
-
    - All assets sit in **basket vault contracts** on Arbitrum.
-
    - Users always transact from their own wallets (MetaMask, WalletConnect).
 
 2. **Baskets, not "funds"**
-
    - We call them **"baskets"** or **"vaults"**, not regulated "funds".
-
    - Each basket is a smart-contract vault that holds a curated list of ERC-20 tokens.
 
 3. **USDC in, vault token out**
-
    - Users deposit **USDC** and receive **vault shares** (ERC-20 receipt token).
-
    - Vault token represents proportional ownership of the underlying basket.
 
 4. **Rules-based, transparent logic**
-
    - Core baskets rebalance on a **schedule** and/or **deviation triggers** (e.g. if weight deviates by >5%).
-
    - All rules are codified in contracts + off-chain rebalancer bot; no manual intervention.
 
 5. **EchoPay as a pure automation layer**
-
    - EchoPay only:
-
      - Stores plans
      - Checks balances
      - Triggers contract calls
      - Sends notifications
-
    - It never takes custody or acts as an exchange.
 
 6. **Phase 1: no fiat, no VRP/Open Banking**
-
    - EchoPay v1 assumes users already hold USDC in their wallet.
    - Fiat onramps / Open Banking / VRP are Phase 2/3, out of scope for this architecture.
 
@@ -102,18 +86,13 @@ Key functions (conceptual):
 ```solidity
 
 function deposit(uint256 assets, address receiver) external returns (uint256 shares);
-
 function redeem(uint256 shares, address receiver, address owner) external returns (uint256 assets);
-
 // Admin / Rebalancer
-
 function setTargetWeights(TokenWeight[] calldata newWeights) external onlyRebalancer;
-
 function executeRebalance(RebalanceAction[] calldata actions) external onlyRebalancer;
 ```
 
 Notes:
-
 - Under the hood, `executeRebalance` will use a DEX router (e.g. Uniswap V3) to swap tokens.
 - Access is controlled via a rebalancer role (EIP-173 owner or AccessControl role).
 
@@ -128,7 +107,6 @@ Responsibilities:
   - Vault contract address
   - Status (active/inactive)
   - Target weights
-
 - Provide read functions for frontend / backend:
 
 ```solidity
@@ -141,7 +119,6 @@ struct BasketInfo {
 }
 
 function getBasketById(string calldata basketId) external view returns (BasketInfo memory);
-
 function listBaskets() external view returns (BasketInfo[] memory);
 ```
 
@@ -179,7 +156,6 @@ If you want a "locker architecture" to separate protocol control from dev keys, 
   - Timelock
 
 For Phase 1, this can be simplified to:
-
 - Owner = EOAs or a multi-sig with a simple upgrade plan.
 
 ### 3.2 Off-Chain Services
@@ -189,7 +165,6 @@ Implemented in TypeScript/Node.js, deployed as serverless functions (e.g. Vercel
 #### 3.2.1 Backend API (`/api`)
 
 Responsibilities:
-
 - Provide REST endpoints for:
   - Listing baskets (proxying on-chain data)
   - Fetching basket details (tokens, weights, performance)
@@ -198,7 +173,6 @@ Responsibilities:
   - Webhook endpoints for notifications (if needed)
 
 Example routes:
-
 - `GET /api/baskets` → list of all baskets
 - `GET /api/baskets/:id` → details for a specific basket
 - `POST /api/echopay/plans` → create plan
@@ -287,6 +261,19 @@ Use cases:
 - Plan executed successfully
 - Low balance → "Top up USDC to stay on track"
 - Plan failed X times → suggest pausing/updating
+
+#### 3.2.5 EchoPay (Phase 1)
+
+EchoPay is an internal module that automates recurring crypto investments into Indexr baskets.
+
+- It is implemented as a separate backend module that:
+  - stores user plans (wallet, basket, amount, frequency)
+  - runs a scheduler to execute plans when funds are available
+  - calls the Indexr vault contracts via a small on-chain client
+- Phase 1 is crypto-only:
+  - No bank pulls, no Open Banking, no VRP.
+  - Users must already hold USDC in their wallet.
+- The code should be structured so EchoPay can later be split into its own service/product without rewriting core logic.
 
 ### 3.3 Frontend / Client
 
