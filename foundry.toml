@@ -1,0 +1,29 @@
+[profile.default]
+
+# Your Solidity version
+solc_version = "0.8.30"
+
+# Where your main contracts live
+src = "contracts/src"
+
+# Where your tests live
+test = "contracts/test"
+
+# Libraries (use root lib only)
+libs = [
+    "lib",
+    "contracts/lib"
+]
+
+# Remappings for OpenZeppelin + forge-std
+remappings = [
+    "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
+    "@openzeppelin/=lib/openzeppelin-contracts/",
+    "forge-std/=lib/forge-std/src/"
+]
+
+# Allow Foundry to read the project folder
+fs_permissions = [
+    { access = "read", path = "./" }
+]
+

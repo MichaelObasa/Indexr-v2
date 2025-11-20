@@ -1,0 +1,17 @@
+[profile.default]
+solc_version = "0.8.30"
+
+# EchoPay sources live here
+src = "contracts"
+
+# EchoPay tests live here
+test = "test"
+
+# Tell Foundry to also look in the root lib folder
+libs = ["../lib"]
+
+# Use the *existing* OpenZeppelin + forge-std from the main project
+remappings = [
+    "@openzeppelin/contracts/=../lib/openzeppelin-contracts/contracts/",
+    "forge-std/=../lib/forge-std/src/"
+]
