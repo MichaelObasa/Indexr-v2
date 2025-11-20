@@ -78,27 +78,40 @@ contract BasketVaultTest is Test {
     }
 
     function testPausePreventsDepositAndWithdraw() public {
-        uint256 depositAmount = 1000e6;
+        // 1. Give the test contract some mock USDC
+        usdc.mint(address(this), 1_000e6);
 
-        // Deposit first
-        vm.prank(user);
-        vault.deposit(depositAmount, user);
+        // 2. Approve the vault to spend USDC
+        usdc.approve(address(vault), type(uint256).max);
 
-        // Pause
+        // 3. Pause the vault
         vm.prank(owner);
         vault.pause();
 
-        assertTrue(vault.isPaused(), "Vault should be paused");
-
-        // Try to deposit - should fail
-        vm.prank(user);
+        // 4. Expect revert on deposit
         vm.expectRevert("BasketVault: paused");
-        vault.deposit(depositAmount, user);
+        vault.deposit(100e6, address(this));
 
-        // Try to withdraw - should fail
-        vm.prank(user);
+        // 5. Expect revert on withdraw as well
         vm.expectRevert("BasketVault: paused");
-        vault.redeem(vault.balanceOf(user), user, user);
+        vault.withdraw(100e6, address(this), address(this));
+    }
+
+    function testPauseAfterDepositPreventsWithdraw() public {
+        // 1. Mint USDC and approve
+        usdc.mint(address(this), 1_000e6);
+        usdc.approve(address(vault), type(uint256).max);
+
+        // 2. Deposit while NOT paused
+        vault.deposit(100e6, address(this));
+
+        // 3. Pause the vault
+        vm.prank(owner);
+        vault.pause();
+
+        // 4. Trying to withdraw now should revert because paused
+        vm.expectRevert("BasketVault: paused");
+        vault.withdraw(50e6, address(this), address(this));
     }
 
     function testUnpauseRestoresDepositAndWithdraw() public {

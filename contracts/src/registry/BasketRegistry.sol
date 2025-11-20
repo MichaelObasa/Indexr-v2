@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.23;
 
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Ownable2Step} from "@openzeppelin/contracts/access/Ownable2Step.sol";
 import {IBasketRegistry} from "./IBasketRegistry.sol";
 
@@ -35,9 +36,8 @@ contract BasketRegistry is Ownable2Step, IBasketRegistry {
      * @notice Constructor
      * @param owner_ Initial owner address
      */
-    constructor(address owner_) Ownable2Step() {
+    constructor(address owner_) Ownable(owner_) {
         require(owner_ != address(0), "BasketRegistry: owner cannot be zero");
-        _transferOwnership(owner_);
     }
 
     /**
