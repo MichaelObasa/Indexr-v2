@@ -1,0 +1,18 @@
+# EchoPay build artifacts
+echopay/broadcast/
+echopay/cache/
+echopay/out/
+
+# General Foundry artifacts
+cache/
+out/
+broadcast/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
