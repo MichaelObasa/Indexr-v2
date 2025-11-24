@@ -115,7 +115,7 @@ contract EchoPayPuller {
      * @dev This function can be called by anyone (bot/keeper) when plan is due
      *
      * For MVP, we:
-     * - Check plan is active
+     * - Check that the plan is active
      * - Check block.timestamp >= nextRun
      * - Check amountPerRun <= monthlyCap (simple cap logic)
      * - transferFrom owner -> this contract
