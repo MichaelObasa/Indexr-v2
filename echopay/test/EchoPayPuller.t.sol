@@ -195,7 +195,7 @@ contract EchoPayPullerTest is Test {
         // First execution
         vm.warp(firstRun + 1);
         puller.execute(planId);
-
+ 
         // Check nextRun was updated
         (, , , , , uint64 nextRunAfterFirst, uint32 freq, ) = puller.plans(planId);
         assertEq(freq, frequency, "frequency mismatch");
