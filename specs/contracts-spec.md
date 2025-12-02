@@ -1,4 +1,4 @@
-# Contracts Spec – Indexr v2 (Phase 1)
+# Contracts Spec - Indexr v2 (Phase 1)
 
 ## 0. Scope & Goals
 
