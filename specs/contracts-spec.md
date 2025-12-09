@@ -5,51 +5,33 @@
 **Goal:**  
 
 Implement the **on-chain core** for Indexr v2 on **Arbitrum** using:
-
 - Non-custodial **basket vaults** (one per Indexr basket)
-
 - **USDC** as the deposit/withdraw asset in Phase 1
-
 - Clean, modular contracts that auditors and other engineers can reason about
-
 - Simple, rules-based rebalancing (AI/ML can plug in later, but not required now)
 
 **Out of scope for Phase 1 contracts:**
 
 - AI Signals Engine / ML logic
-
 - Fiat rails / VRP / Open Banking
-
 - Cross-chain logic
-
 - Governance/tokenomics
-
 - Access control complexity beyond simple owner / roles
-
 - EchoPay internals (it's an off-chain module that just calls the contracts)
 
 ## 1. Technical Environment
 
 - **Chain:** Arbitrum (testnet → mainnet later)
-
 - **Base asset:** USDC (ERC-20)
-
 - **Language:** Solidity ^0.8.x
-
 - **Standards / Libraries:**
 
   - OpenZeppelin:
-
     - `ERC20`
-
     - `ERC4626` (vault)
-
     - `Ownable` / `Ownable2Step`
-
     - `ReentrancyGuard`
-
     - `SafeERC20`
-
     - `AccessControl` (if needed)
 
 - **Tooling:** Foundry for compilation, testing, scripting
@@ -61,31 +43,22 @@ Indexr Phase 1 consists of:
 1. **Basket Vaults**  
 
    Smart contracts that:
-
    - accept USDC deposits
-
    - mint "vault shares" (ERC-20)
-
    - track total assets and share conversions
-
    - (later) hold a portfolio of tokens representing the basket
 
 2. **Basket Registry**  
 
    A central contract that:
-
    - knows all basket vaults by ID (e.g. `INDXR-10`, `INDXR-AI`)
-
    - stores metadata, token lists and target weights
-
    - is used by the backend, EchoPay and any off-chain services
 
 3. **Oracle Adapter**  
 
    An interface (with simple implementation later) for reading token prices from:
-
    - Chainlink where available
-
    - Pyth where needed  
 
    The core contracts should **not** depend on a specific oracle vendor; they depend on `IOracleAdapter`.
@@ -93,11 +66,8 @@ Indexr Phase 1 consists of:
 4. **Rebalancing Hooks (off-chain driven)**  
 
    Rebalancing logic in Phase 1 is primarily off-chain:
-
    - a rebalancer bot calculates desired trades
-
    - the bot submits a transaction to the vault with specific actions
-
    - vault executes swaps (in a later iteration) or updates accounting  
 
    For Phase 1, we may keep rebalancing very minimal, but the contracts must expose the right functions and events to support it.
@@ -105,13 +75,9 @@ Indexr Phase 1 consists of:
 5. **Strategy Engine (Future / Off-chain)**  
 
    The "brain" (rules engine → AI later) sits off-chain and:
-
    - reads basket state + prices
-
    - decides new target weights
-
    - instructs the vault via allowed functions  
-
    **Important:** Contracts must **not** depend on AI. They just provide clean hooks.
 
 **EchoPay**  
