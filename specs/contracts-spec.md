@@ -99,27 +99,18 @@ Indexr Phase 1 consists of:
 We will implement the following contracts/interfaces:
 
 1. **`BasketVault`** (core vault, one instance per basket)
-
 2. **`BasketRegistry`** (global registry)
-
 3. **`IOracleAdapter`** (interface only)
-
 4. **`IBasketVault` / `IBasketRegistry`** (interfaces)
 
 5. Optionally: a simple **`VaultFactory`** if we want programmatic creation later (not required initially).
 
 We will structure the `/contracts/src` folder roughly as:
-
 - `src/vaults/BasketVault.sol`
-
 - `src/registry/BasketRegistry.sol`
-
 - `src/oracles/IOracleAdapter.sol`
-
 - `src/vaults/IBasketVault.sol`
-
 - `src/registry/IBasketRegistry.sol`
-
 - (Optional later) `src/factory/VaultFactory.sol`
 
 ## 4. BasketVault Specification
@@ -127,59 +118,37 @@ We will structure the `/contracts/src` folder roughly as:
 ### 4.1 Purpose
 
 `BasketVault` is an **ERC-4626-style vault** that:
-
 - Accepts **USDC** as the underlying asset in Phase 1
-
 - Issues ERC-20 "vault shares" representing pro-rata ownership
-
 - Holds a set of **underlying tokens** defined by the registry (future)
-
 - Provides clean interfaces for:
-
   - deposits
-
   - withdrawals
-
   - reading total assets / NAV
-
   - rebalancing (admin / rebalancer only)
 
 In Phase 1, we can start with a simplified model:
-
 - Vault asset = USDC
-
 - Underlying portfolio may initially just be USDC (no swaps)
-
 - The interfaces must allow us to add real off-chain driven rebalancing later without breaking compatibility
 
 ### 4.2 Inheritance & Interfaces
 
 - Inherit from:
-
   - `ERC4626`
-
   - `Ownable2Step`
-
   - `ReentrancyGuard`
-
 - Implement interface:
-
   - `IBasketVault`
 
 ### 4.3 Key State Variables
 
 - `address public immutable asset;`  
-
   (from ERC4626 – USDC token address)
-
 - `string public basketId;`  
-
   e.g. `"INDXR-10"`
-
 - `address public registry;`  
-
   Address of `BasketRegistry` (for metadata/token list)
-
 - `bool public isPaused;`  
 
   Simple pause switch for deposits/withdrawals (emergency use)
