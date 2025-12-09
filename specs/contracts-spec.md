@@ -191,19 +191,12 @@ Phase 1 may not hold real token portfolios yet (just USDC). When we do, we will 
 ### 4.4 Core Functions
 
 Implement (or inherit) the usual ERC4626 functions:
-
 - `deposit(uint256 assets, address receiver)`
-
 - `mint(uint256 shares, address receiver)`
-
 - `withdraw(uint256 assets, address receiver, address owner)`
-
 - `redeem(uint256 shares, address receiver, address owner)`
-
 - `totalAssets()`
-
 - `convertToShares(uint256 assets)`
-
 - `convertToAssets(uint256 shares)`
 
 Add vault-specific functions:
@@ -241,19 +234,15 @@ ERC4626 already emits standard Deposit / Withdraw events.
 ### 4.6 Security Considerations
 
 - Guard deposit/withdraw functions with `whenNotPaused` or a custom `require(!isPaused)`.
-
 - Use `ReentrancyGuard` on external functions that move funds.
-
 - Only owner (or future AccessControl role) should be able to:
   - pause/unpause
   - update sensitive addresses (if any).
-
 - No external arbitrary calls – keep interactions minimal and well-defined.
 
 **Upgradability (Phase 1):**
 
 - Start with non-upgradeable contracts for simplicity.
-
 - If we need upgrades later, we can deploy new vaults and provide a migration path (UI-driven), rather than proxies.
 
 ## 5. BasketRegistry Specification
@@ -261,9 +250,7 @@ ERC4626 already emits standard Deposit / Withdraw events.
 ### 5.1 Purpose
 
 `BasketRegistry` is a central contract that:
-
 - Tracks all available Indexr baskets
-
 - Stores:
   - `basketId` (string or bytes32)
   - vault address
@@ -274,11 +261,8 @@ ERC4626 already emits standard Deposit / Withdraw events.
   - active/disabled status
 
 It is the source of truth for:
-
 - Frontend (what baskets exist, composition, status)
-
 - Backend/EchoPay (which vault address to target)
-
 - Future AI engine (what tokens/weights each basket has)
 
 ### 5.2 Interface & Key Types
