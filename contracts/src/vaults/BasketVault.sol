@@ -60,7 +60,7 @@ contract BasketVault is ERC4626, Ownable2Step, ReentrancyGuard, IBasketVault {
         require(owner_ != address(0), "BasketVault: owner cannot be zero");
 
         basketId = basketId_;
-        registry = registry_;
+        registry = registry_; 
     }
 
     /**
