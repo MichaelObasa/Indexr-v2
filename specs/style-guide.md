@@ -64,7 +64,7 @@ Coding standards and best practices for the Indexr codebase.
 
 ### General
 - Format code consistently (use Prettier/ESLint)
-- Review code before merging
+- Always review code before merging
 - Keep dependencies up to date
 - Document breaking changes
 
