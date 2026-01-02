@@ -38,7 +38,7 @@ Implement the **on-chain core** for Indexr v2 on **Arbitrum** using:
 
 ## 2. Overall Design
 
-Indexr Phase 1 consists of:
+Indexr Phase 1 consists of the following:
 
 1. **Basket Vaults**  
 
