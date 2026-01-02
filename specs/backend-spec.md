@@ -21,7 +21,7 @@ All services are stateless where possible, with database persistence for EchoPay
 - [ ] Webhook endpoints (if needed)
 - [ ] Error handling and validation
 
-### EchoPay Module (internal for now)
+### EchoPay Module (internal for the time being)
 
 - Located under `/backend/echopay` (or similar).
 - Responsibilities:
