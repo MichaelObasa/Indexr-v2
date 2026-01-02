@@ -145,7 +145,7 @@ contract EchoPayPuller {
 
         emit PlanExecuted(planId, plan.owner, plan.amountPerRun);
     }
-
+ 
     // Future enhancements (not needed for MVP tests):
     // - Add monthly window tracking (spentThisPeriod, periodId)
     // - Add expiry date support (expiresAt field)
