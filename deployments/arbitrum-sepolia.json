@@ -1,0 +1,67 @@
+{
+  "network": "arbitrum-sepolia",
+  "chainId": 421614,
+  "deployedAt": "",
+  "deployer": "",
+  "contracts": {
+    "MockUSDC": {
+      "address": "",
+      "deployedAt": ""
+    },
+    "BasketRegistry": {
+      "address": "",
+      "deployedAt": ""
+    },
+    "INDXR10Vault": {
+      "address": "",
+      "basketId": "INDXR-10",
+      "name": "Indexr Top 10 Vault",
+      "symbol": "INDXR10",
+      "category": "classic",
+      "deployedAt": ""
+    },
+    "INDXRAIVault": {
+      "address": "",
+      "basketId": "INDXR-AI", 
+      "name": "Indexr AI Projects Vault",
+      "symbol": "INDXRAI",
+      "category": "thematic",
+      "deployedAt": ""
+    },
+    "EchoPayPuller": {
+      "address": "",
+      "deployedAt": ""
+    }
+  },
+  "baskets": [
+    {
+      "id": "INDXR-10",
+      "name": "Indexr Top 10",
+      "description": "Top 10 cryptocurrencies by market capitalization",
+      "category": "classic",
+      "riskLevel": "medium",
+      "tokens": [
+        { "symbol": "WBTC", "name": "Wrapped Bitcoin", "weight": 3500 },
+        { "symbol": "WETH", "name": "Wrapped Ether", "weight": 3000 },
+        { "symbol": "ARB", "name": "Arbitrum", "weight": 1500 },
+        { "symbol": "LINK", "name": "Chainlink", "weight": 1000 },
+        { "symbol": "UNI", "name": "Uniswap", "weight": 1000 }
+      ]
+    },
+    {
+      "id": "INDXR-AI",
+      "name": "Indexr AI Projects",
+      "description": "Leading AI and machine learning crypto projects",
+      "category": "thematic",
+      "riskLevel": "high",
+      "tokens": [
+        { "symbol": "RENDER", "name": "Render Network", "weight": 2500 },
+        { "symbol": "FET", "name": "Fetch.ai", "weight": 2500 },
+        { "symbol": "OCEAN", "name": "Ocean Protocol", "weight": 2000 },
+        { "symbol": "AGIX", "name": "SingularityNET", "weight": 1500 },
+        { "symbol": "TAO", "name": "Bittensor", "weight": 1500 }
+      ]
+    }
+  ]
+}
+
