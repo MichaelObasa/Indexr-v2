@@ -7,7 +7,7 @@ import {EchoPayPuller} from "../contracts/EchoPayPuller.sol";
 /**
  * @title DeployEchoPay
  * @notice Deployment script for EchoPayPuller contract
- * @dev Deploy after Indexr contracts are deployed
+ * @dev Deploy after Indexr contracts are deployed 
  * 
  * Environment Variables Required:
  *   - PRIVATE_KEY: Deployer's private key
