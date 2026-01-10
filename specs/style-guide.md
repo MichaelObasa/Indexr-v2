@@ -11,7 +11,7 @@ Coding standards and best practices for the Indexr codebase.
 - **Pure functions where possible**: Minimize side effects
 
 ### Naming Conventions
-- **No abbreviations**: Use full words (`getUserBalance` not `getUsrBal`)
+- **No abbreviations**: Use full words for clarity (`getUserBalance` not `getUsrBal`)
 - **No magic values**: Extract constants with meaningful names
 - **Consistent patterns**: Follow language-specific conventions (camelCase for JS/TS, PascalCase for Solidity)
 - **Self-documenting**: Names should explain intent without requiring comments
