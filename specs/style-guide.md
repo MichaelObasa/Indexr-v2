@@ -48,7 +48,7 @@ Coding standards and best practices for the Indexr codebase.
 - **No sensitive data**: Never log private keys or sensitive user data
 - **Production-ready**: Logs should be useful in production debugging
 
-## Language-Specific Notes
+## Language-Specific Notes:
 
 ### Solidity
 - Follow Solidity style guide conventions
