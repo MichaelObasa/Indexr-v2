@@ -10,13 +10,13 @@ Coding standards and best practices for the Indexr codebase.
 - **Reasonable length**: Functions should be readable in one screen view
 - **Pure functions where possible**: Minimize side effects
 
-### Naming Conventions
+### Naming Conventions:
 - **No abbreviations**: Use full words for clarity (`getUserBalance` not `getUsrBal`)
 - **No magic values**: Extract constants with meaningful names
 - **Consistent patterns**: Follow language-specific conventions (camelCase for JS/TS, PascalCase for Solidity)
 - **Self-documenting**: Names should explain intent without requiring comments
 
-### Configuration-Driven Behavior
+### Configuration-Driven Behavior:
 - **No hardcoded addresses**: Use environment variables or config files
 - **No hardcoded constants**: Extract magic numbers to named constants
 - **Chain-agnostic where possible**: Support testnet/mainnet via config
