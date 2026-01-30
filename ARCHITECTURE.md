@@ -8,7 +8,7 @@
 > - Simple, rules-based baskets (Core)  
 
 > - EchoPay v1: **crypto-only recurring investing from wallet**, no fiat pulls
-
+ 
 ## 1. High-Level Overview
 
 Indexr is a **non-custodial, on-chain basket protocol** that lets users invest into themed crypto baskets (e.g. "Top 10", "AI", "DeFi") via smart contracts.
