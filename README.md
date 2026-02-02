@@ -1,4 +1,4 @@
-# Indexr v2
+# Indexr v2 
 
 **The Vanguard of Web3** - Non-custodial crypto baskets with recurring investments.
 
