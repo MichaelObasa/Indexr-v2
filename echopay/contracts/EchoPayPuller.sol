@@ -106,7 +106,7 @@ contract EchoPayPuller {
         require(plan.active, "already inactive");
 
         plan.active = false;
-        emit PlanCancelled(planId, plan.owner);
+        emit PlanCancelled(planId, plan.owner); 
     }
 
     /**
