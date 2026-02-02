@@ -87,7 +87,7 @@ contract EchoPayPuller {
      */
     function pausePlan(uint256 planId) external {
         Plan storage plan = plans[planId];
-        require(plan.owner != address(0), "plan not found");
+        require(plan.owner != address(0), "plan not found"); 
         require(msg.sender == plan.owner, "not owner");
         require(plan.active, "already inactive");
 
