@@ -1,6 +1,6 @@
 # Indexr v2
 
-**The Vanguard of Web3** — Non-custodial crypto baskets with recurring investments.
+**The Vanguard of Web3** - Non-custodial crypto baskets with recurring investments.
 
 Indexr lets users invest into themed crypto baskets (e.g., "Top 10", "AI Projects", "DeFi") via smart contracts on Arbitrum. Users deposit USDC and receive vault tokens representing proportional ownership of the underlying basket.
 
