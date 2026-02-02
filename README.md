@@ -46,7 +46,7 @@ Open [http://localhost:3000](http://localhost:3000)
 │   │   ├── vaults/    # BasketVault (ERC-4626)
 │   │   ├── registry/  # BasketRegistry
 │   │   └── mocks/     # MockUSDC for testing
-│   ├── test/          # Foundry tests
+│   ├── test/         # Foundry tests
 │   └── script/        # Deployment scripts
 ├── frontend/          # Next.js 14 dApp
 │   ├── src/app/       # Pages and API routes
