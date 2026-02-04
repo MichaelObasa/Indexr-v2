@@ -8,7 +8,7 @@ Coding standards and best practices for the Indexr codebase.
 - **Small, single-purpose functions**: Each function should do one thing well
 - **Clear, descriptive names**: Avoid abbreviations and magic numbers
 - **Reasonable length**: Functions should be readable in one screen view
-- **Pure functions where possible**: Minimize side effects
+- **Pure functions where possible**: Minimize side effects 
 
 ### Naming Conventions:
 - **No abbreviations**: Use full words for clarity (`getUserBalance` not `getUsrBal`)
