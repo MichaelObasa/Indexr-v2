@@ -54,7 +54,7 @@ Coding standards and best practices for the Indexr codebase.
 - Follow Solidity style guide conventions
 - Use NatSpec comments for public functions
 - Emit events for important state changes
-- Use `require` with descriptive error messages
+- Use `require` with descriptive error messages 
 
 ### TypeScript/JavaScript
 - Use TypeScript for type safety
