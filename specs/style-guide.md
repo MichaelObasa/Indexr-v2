@@ -30,7 +30,7 @@ Coding standards and best practices for the Indexr codebase.
 
 ### Testing
 - **Tests for non-trivial logic**: Any business logic should have tests
-- **Unit tests**: Test individual functions in isolation
+- **Unit tests**: Test individual functions in isolation 
 - **Integration tests**: Test component interactions
 - **Edge cases**: Test error conditions and boundary cases
 - **Maintainable tests**: Tests should be readable and easy to update
