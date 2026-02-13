@@ -58,7 +58,7 @@ All services are stateless where possible, with database persistence for EchoPay
 - [ ] Indexes and query optimization
 - [ ] Migration strategy
 
-### TODO: External Integrations
+### TODO: External Integrations 
 - [ ] Arbitrum RPC connection
 - [ ] Wallet balance queries
 - [ ] Contract interaction utilities
