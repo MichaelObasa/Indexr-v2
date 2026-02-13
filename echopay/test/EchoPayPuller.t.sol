@@ -51,7 +51,7 @@ contract EchoPayPullerTest is Test {
         );
     }
 
-    function testCreatePlan() public {
+    function testCreatePlan() public { 
         uint64 firstRun = uint64(block.timestamp + 1 days);
         uint32 frequency = 30 days;
         uint256 amountPerRun = 400e6;
