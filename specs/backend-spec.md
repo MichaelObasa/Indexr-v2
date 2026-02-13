@@ -1,6 +1,6 @@
 # Backend Specification
 
-This document describes the Node.js/TypeScript backend services for Indexr, including the REST API, EchoPay scheduler, and database schemas.
+This document describes the whole Node.js/TypeScript backend services for Indexr, including the REST API, EchoPay scheduler, and database schemas.
 
 ## Overview
 
