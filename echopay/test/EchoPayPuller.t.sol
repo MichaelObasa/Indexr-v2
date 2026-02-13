@@ -63,7 +63,7 @@ contract EchoPayPullerTest is Test {
          address token,
          address vaultAddr,
          uint256 amount,
-         uint256 cap,
+         uint256 cap, 
          uint64 nextRun,
          uint32 freq,
          bool active) = puller.plans(planId);
