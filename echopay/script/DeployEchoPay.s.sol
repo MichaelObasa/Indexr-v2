@@ -42,7 +42,7 @@ contract DeployEchoPay is Script {
 
         console.log("");
         console.log("===========================================");
-        console.log("         ECHOPAY DEPLOYMENT COMPLETE       ");
+        console.log("         ECHOPAY DEPLOYMENT COMPLETE       "); 
         console.log("===========================================");
         console.log("");
         console.log("Add to your frontend .env.local:");
