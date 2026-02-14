@@ -38,7 +38,7 @@ contract DeployEchoPay is Script {
         EchoPayPuller puller = new EchoPayPuller();
         console.log("[1/1] EchoPayPuller deployed:", address(puller));
 
-        vm.stopBroadcast();
+        vm.stopBroadcast(); 
 
         console.log("");
         console.log("===========================================");
