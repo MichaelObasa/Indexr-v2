@@ -64,7 +64,7 @@ contract DeployAll is Script {
         usdc = new MockUSDC();
         console.log("[1/5] MockUSDC deployed:", address(usdc));
 
-        // Mint initial supply to deployer
+        // Mint initial supply to deployer 
         usdc.mint(deployer, 10_000_000 * 10 ** 6); // 10M USDC
         console.log("      Minted 10,000,000 USDC to deployer");
 
