@@ -1,6 +1,6 @@
 {
   "network": "arbitrum-sepolia",
-  "chainId": 421614,
+  "chainId": 421614, 
   "deployedAt": "",
   "deployer": "",
   "contracts": {
