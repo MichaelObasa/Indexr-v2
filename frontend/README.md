@@ -10,7 +10,7 @@ Non-custodial crypto baskets with recurring investments. Built with Next.js 14, 
 npm install 
 ``` 
 
-### 2. Configure Environment
+### 2. Configure Environment 
 
 Copy the example environment file and fill in your values:
 
