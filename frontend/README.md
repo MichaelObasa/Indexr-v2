@@ -37,7 +37,7 @@ Open [http://localhost:3000](http://localhost:3000) to view the app.
 src/
 ├── app/                    # Next.js App Router pages
 │   ├── api/               # API routes
-│   │   ├── baskets/       # Basket endpoints
+│   │   ├── baskets/       # Basket endpoints 
 │   │   ├── plans/         # EchoPay plan endpoints
 │   │   └── cron/          # Scheduler endpoints
 │   ├── baskets/           # Basket pages
