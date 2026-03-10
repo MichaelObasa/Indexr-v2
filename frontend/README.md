@@ -7,7 +7,7 @@ Non-custodial crypto baskets with recurring investments. Built with Next.js 14, 
 ### 1. Install Dependencies
 
 ```bash
-npm install
+npm install 
 ```
 
 ### 2. Configure Environment
