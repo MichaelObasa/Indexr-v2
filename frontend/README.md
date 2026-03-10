@@ -93,7 +93,7 @@ npm start
 
 ## Development
 
-### Adding a New Basket
+### Adding a New Basket 
 
 1. Deploy a new BasketVault contract
 2. Register it in BasketRegistry
