@@ -12,7 +12,7 @@ npm install
 
 ### 2. Configure Environment 
 
-Copy the example environment file and fill in your values:
+Copy the example environment file and fill in your values: 
 
 ```bash
 cp .env.example .env.local
