@@ -2,65 +2,70 @@
 
 ## Required Environment Variables
 
-Create a `.env` file in the `contracts/` directory with:
+Copy `.env.example` from the repo root to `.env` in the repo root. Fill in:
 
-```bash
-# Deployer private key (without 0x prefix)
-PRIVATE_KEY=your_private_key_here
-
-# Arbitrum Sepolia RPC URL
-ARBITRUM_SEPOLIA_RPC=https://sepolia-rollup.arbitrum.io/rpc
-
-# Arbiscan API Key for contract verification (optional)
-ETHERSCAN_API_KEY=your_arbiscan_api_key
-```
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `PRIVATE_KEY` | Yes | Deployer private key, **no 0x prefix** |
+| `ARBITRUM_SEPOLIA_RPC` | Yes | RPC URL, e.g. `https://sepolia-rollup.arbitrum.io/rpc` |
+| `ETHERSCAN_API_KEY` | No | Arbiscan API key for `--verify` (omit for first deploy) |
 
 ## Deployment Commands
 
-### 1. Deploy Indexr Contracts (MockUSDC, Registry, Vaults)
+Run from repo root. Ensure `.env` is loaded (see below).
+
+### 1. Deploy Indexr Contracts (MockUSDC, Registry, INDXR-10, INDXR-AI)
 
 ```bash
 cd contracts
-source .env
-
 forge script script/DeployAll.s.sol:DeployAll \
   --rpc-url $ARBITRUM_SEPOLIA_RPC \
   --broadcast \
-  --verify \
   -vvvv
 ```
 
-### 2. Deploy EchoPay Contract
+Omit `--verify` for first deploy if you don't have `ETHERSCAN_API_KEY` set.
+
+### 2. Deploy EchoPay Contract (after Indexr)
 
 ```bash
 cd echopay
-source ../.env
-
 forge script script/DeployEchoPay.s.sol:DeployEchoPay \
   --rpc-url $ARBITRUM_SEPOLIA_RPC \
   --broadcast \
-  --verify \
   -vvvv
+```
+
+### Loading .env (Unix / Git Bash)
+
+```bash
+export $(grep -v '^#' .env | xargs)
+```
+
+### Loading .env (Windows PowerShell)
+
+```powershell
+Get-Content .env | ForEach-Object {
+  if ($_ -match '^([^#][^=]+)=(.*)$') {
+    [Environment]::SetEnvironmentVariable($matches[1].Trim(), $matches[2].Trim(), 'Process')
+  }
+}
+```
+
+Or set manually before each deploy:
+
+```powershell
+$env:PRIVATE_KEY = "your_key_no_0x"
+$env:ARBITRUM_SEPOLIA_RPC = "https://sepolia-rollup.arbitrum.io/rpc"
 ```
 
 ## Getting Test ETH
 
-1. Get Arbitrum Sepolia ETH from: https://faucet.quicknode.com/arbitrum/sepolia
-2. You need ~0.01 ETH for deployment gas costs
+- Arbitrum Sepolia faucet: https://faucet.quicknode.com/arbitrum/sepolia
+- Need ~0.01 ETH for deployment gas
 
 ## After Deployment
 
-1. Copy the deployed addresses from the console output
-2. Update `deployments/arbitrum-sepolia.json` with the addresses
-3. Update frontend `.env.local` with the contract addresses
-
-## Contract Verification
-
-If verification fails during deployment, manually verify:
-
-```bash
-forge verify-contract <CONTRACT_ADDRESS> src/mocks/MockUSDC.sol:MockUSDC \
-  --chain arbitrum-sepolia \
-  --etherscan-api-key $ETHERSCAN_API_KEY
-```
-
+1. Copy deployed addresses from console output
+2. Update `deployments/arbitrum-sepolia.json`
+3. Update `frontend/.env.local` with contract addresses (see `frontend/ENV_TEMPLATE.txt`)
