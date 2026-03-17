@@ -1,0 +1,40 @@
+---
+description: Indexr MVP / YC Summer 2026 scope
+globs: ["**/*"]
+alwaysApply: true
+---
+
+Indexr is currently in MVP crunch mode for YC Summer 2026.
+
+Current product scope:
+- Chain: Arbitrum only
+- Launch funds: INDXR-BAE and INDXR-10 only
+- Product: simple, rules-based, non-custodial crypto index investing
+- Priority: guarded beta with real deposits, clear safety controls, and simple UX
+
+In scope:
+- contract deployment
+- frontend wiring
+- deposit / redeem flows
+- transaction history
+- dashboard correctness
+- deterministic, simple portfolio behavior
+- admin controls, caps, pause controls
+- test coverage for money-moving flows
+
+Out of scope for now:
+- AI Signals Engine
+- Open Banking / VRP
+- smart wallet abstraction
+- locker-per-user vault architecture
+- multi-chain support
+- additional funds beyond INDXR-BAE and INDXR-10
+- heavy infra / Kubernetes / microservices
+- speculative future products
+
+Engineering principles:
+- no fake enterprise complexity
+- prefer the smallest correct implementation
+- always distinguish real functionality from mocks/placeholders
+- all money-moving code must be tested before merge
+- optimize for speed, safety, clarity, and one-person operability
