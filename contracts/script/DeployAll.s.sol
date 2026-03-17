@@ -46,7 +46,7 @@ contract DeployAll is Script {
     address constant FET = address(0x7777777777777777777777777777777777777777);
     address constant OCEAN = address(0x8888888888888888888888888888888888888888);
     address constant AGIX = address(0x9999999999999999999999999999999999999999);
-    address constant TAO = address(0xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA);
+    address constant TAO = address(0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAa);
 
     function run() external {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
