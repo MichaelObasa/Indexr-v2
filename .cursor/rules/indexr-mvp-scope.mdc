@@ -1,5 +1,5 @@
 ---
-description: Indexr MVP / YC Summer 2026 scope
+description: Indexr MVP
 globs: ["**/*"]
 alwaysApply: true
 ---

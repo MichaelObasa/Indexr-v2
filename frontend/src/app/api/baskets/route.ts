@@ -31,10 +31,10 @@ const mockBaskets = [
     updated_at: new Date().toISOString(),
   },
   {
-    id: "INDXR-AI",
-    name: "Indexr AI Projects",
-    description: "Leading AI and machine learning crypto projects",
-    vault_address: process.env.NEXT_PUBLIC_INDXRAI_VAULT || "0x0000000000000000000000000000000000000000",
+    id: "INDXR-BAE",
+    name: "Indexr BAE",
+    description: "Placeholder BAE basket metadata for Arbitrum Sepolia MVP testing",
+    vault_address: process.env.NEXT_PUBLIC_INDXRBAE_VAULT || "0x0000000000000000000000000000000000000000",
     category: "thematic",
     risk_level: "high",
     tokens: [

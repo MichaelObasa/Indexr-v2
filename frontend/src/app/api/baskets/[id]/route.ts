@@ -27,11 +27,11 @@ const mockBaskets: Record<string, object> = {
     active: true,
     tvl_usdc: 0,
   },
-  "INDXR-AI": {
-    id: "INDXR-AI",
-    name: "Indexr AI Projects",
-    description: "Leading AI and machine learning crypto projects",
-    vault_address: process.env.NEXT_PUBLIC_INDXRAI_VAULT || "0x0000000000000000000000000000000000000000",
+  "INDXR-BAE": {
+    id: "INDXR-BAE",
+    name: "Indexr BAE",
+    description: "Placeholder BAE basket metadata for Arbitrum Sepolia MVP testing",
+    vault_address: process.env.NEXT_PUBLIC_INDXRBAE_VAULT || "0x0000000000000000000000000000000000000000",
     category: "thematic",
     risk_level: "high",
     tokens: [

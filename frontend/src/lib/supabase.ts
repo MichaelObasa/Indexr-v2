@@ -193,12 +193,19 @@ export async function markNotificationRead(notificationId: string): Promise<bool
 
 // Mock data for development without Supabase
 function getMockBaskets(): Basket[] {
+  const indxr10Vault =
+    process.env.NEXT_PUBLIC_INDXR10_VAULT ||
+    "0x0000000000000000000000000000000000000000";
+  const indxrBaeVault =
+    process.env.NEXT_PUBLIC_INDXRBAE_VAULT ||
+    "0x0000000000000000000000000000000000000000";
+
   return [
     {
       id: "INDXR-10",
       name: "Indexr Top 10",
       description: "Top 10 cryptocurrencies by market capitalization",
-      vault_address: "0x0000000000000000000000000000000000000000",
+      vault_address: indxr10Vault,
       category: "classic",
       risk_level: "medium",
       tokens: [
@@ -214,10 +221,10 @@ function getMockBaskets(): Basket[] {
       updated_at: new Date().toISOString(),
     },
     {
-      id: "INDXR-AI",
-      name: "Indexr AI Projects",
-      description: "Leading AI and machine learning crypto projects",
-      vault_address: "0x0000000000000000000000000000000000000000",
+      id: "INDXR-BAE",
+      name: "Indexr BAE",
+      description: "Placeholder BAE basket metadata for Arbitrum Sepolia MVP testing",
+      vault_address: indxrBaeVault,
       category: "thematic",
       risk_level: "high",
       tokens: [

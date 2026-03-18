@@ -20,7 +20,7 @@ contract Deploy is Script {
     address public mockUSDC;
     address public registry;
     address public vault1; // INDXR-10
-    address public vault2; // INDXR-AI
+    address public vault2; // INDXR-BAE
 
     // Sample token addresses for basket composition (placeholder addresses)
     // In production, these would be real token addresses on Arbitrum
@@ -71,17 +71,17 @@ contract Deploy is Script {
         vault1 = address(indxr10Vault);
         console.log("INDXR-10 Vault deployed at:", vault1);
 
-        // 4. Deploy BasketVault for INDXR-AI (AI Projects)
-        BasketVault indxrAIVault = new BasketVault(
+        // 4. Deploy BasketVault for INDXR-BAE
+        BasketVault indxrBAEVault = new BasketVault(
             IERC20(mockUSDC),
-            "Indexr AI Projects Vault",
-            "INDXRAI",
-            "INDXR-AI",
+            "Indexr BAE Vault",
+            "INDXRBAE",
+            "INDXR-BAE",
             registry,
             deployer
         );
-        vault2 = address(indxrAIVault);
-        console.log("INDXR-AI Vault deployed at:", vault2);
+        vault2 = address(indxrBAEVault);
+        console.log("INDXR-BAE Vault deployed at:", vault2);
 
         // 5. Register baskets in registry
 
@@ -109,7 +109,7 @@ contract Deploy is Script {
         );
         console.log("INDXR-10 registered in registry");
 
-        // INDXR-AI: AI Projects basket
+        // INDXR-BAE: placeholder thematic basket for Sepolia MVP
         address[] memory tokensAI = new address[](5);
         tokensAI[0] = RENDER_PLACEHOLDER; // RENDER
         tokensAI[1] = FET_PLACEHOLDER;    // FET
@@ -125,13 +125,13 @@ contract Deploy is Script {
         weightsAI[4] = 1000; // 10% Other
 
         basketRegistry.registerBasket(
-            "INDXR-AI",
+            "INDXR-BAE",
             vault2,
             tokensAI,
             weightsAI,
             1 // Category: Thematic
         );
-        console.log("INDXR-AI registered in registry");
+        console.log("INDXR-BAE registered in registry");
 
         vm.stopBroadcast();
 
@@ -143,7 +143,7 @@ contract Deploy is Script {
         console.log("MockUSDC:", mockUSDC);
         console.log("BasketRegistry:", registry);
         console.log("INDXR-10 Vault:", vault1);
-        console.log("INDXR-AI Vault:", vault2);
+        console.log("INDXR-BAE Vault:", vault2);
         console.log("=========================================\n");
     }
 }

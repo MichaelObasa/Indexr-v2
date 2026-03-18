@@ -20,11 +20,11 @@
       "category": "classic",
       "deployedAt": ""
     },
-    "INDXRAIVault": {
+    "INDXRBAEVault": {
       "address": "",
-      "basketId": "INDXR-AI", 
-      "name": "Indexr AI Projects Vault",
-      "symbol": "INDXRAI",
+      "basketId": "INDXR-BAE",
+      "name": "Indexr BAE Vault",
+      "symbol": "INDXRBAE",
       "category": "thematic",
       "deployedAt": ""
     },
@@ -49,9 +49,9 @@
       ]
     },
     {
-      "id": "INDXR-AI",
-      "name": "Indexr AI Projects",
-      "description": "Leading AI and machine learning crypto projects",
+      "id": "INDXR-BAE",
+      "name": "Indexr BAE",
+      "description": "Placeholder BAE basket metadata for Arbitrum Sepolia MVP testing",
       "category": "thematic",
       "riskLevel": "high",
       "tokens": [
