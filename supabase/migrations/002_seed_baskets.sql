@@ -18,9 +18,9 @@ INSERT INTO baskets (id, name, description, vault_address, category, risk_level,
     ]'::jsonb
 ),
 (
-    'INDXR-AI',
-    'Indexr AI Projects',
-    'Leading AI and machine learning crypto projects. Higher risk, higher potential reward.',
+    'INDXR-BAE',
+    'Indexr BAE',
+    'Placeholder BAE basket metadata for Arbitrum Sepolia MVP testing.',
     '0x0000000000000000000000000000000000000000', -- UPDATE AFTER DEPLOYMENT
     'thematic',
     'high',

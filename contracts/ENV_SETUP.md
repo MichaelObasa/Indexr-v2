@@ -14,7 +14,7 @@ Copy `.env.example` from the repo root to `.env` in the repo root. Fill in:
 
 Run from repo root. Ensure `.env` is loaded (see below).
 
-### 1. Deploy Indexr Contracts (MockUSDC, Registry, INDXR-10, INDXR-AI)
+### 1. Deploy Indexr Contracts (MockUSDC, Registry, INDXR-10, INDXR-BAE)
 
 ```bash
 cd contracts
@@ -67,5 +67,5 @@ $env:ARBITRUM_SEPOLIA_RPC = "https://sepolia-rollup.arbitrum.io/rpc"
 ## After Deployment
 
 1. Copy deployed addresses from console output
-2. Update `deployments/arbitrum-sepolia.json`
+2. Update `deployments/arbitrum-sepolia.json` with `MockUSDC`, `BasketRegistry`, `INDXR10Vault`, and `INDXRBAEVault`
 3. Update `frontend/.env.local` with contract addresses (see `frontend/ENV_TEMPLATE.txt`)

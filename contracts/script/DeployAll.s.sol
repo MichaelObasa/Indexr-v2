@@ -32,7 +32,7 @@ contract DeployAll is Script {
     MockUSDC public usdc;
     BasketRegistry public registry;
     BasketVault public indxr10Vault;
-    BasketVault public indxrAIVault;
+    BasketVault public indxrBAEVault;
 
     // Placeholder token addresses (for basket composition display)
     // These represent the "target" tokens in each basket
@@ -83,16 +83,16 @@ contract DeployAll is Script {
         );
         console.log("[3/5] INDXR-10 Vault deployed:", address(indxr10Vault));
 
-        // ===== 4. Deploy INDXR-AI Vault (AI Thematic) =====
-        indxrAIVault = new BasketVault(
+        // ===== 4. Deploy INDXR-BAE Vault (MVP thematic basket) =====
+        indxrBAEVault = new BasketVault(
             IERC20(address(usdc)),
-            "Indexr AI Projects Vault",
-            "INDXRAI",
-            "INDXR-AI",
+            "Indexr BAE Vault",
+            "INDXRBAE",
+            "INDXR-BAE",
             address(registry),
             deployer
         );
-        console.log("[4/5] INDXR-AI Vault deployed:", address(indxrAIVault));
+        console.log("[4/5] INDXR-BAE Vault deployed:", address(indxrBAEVault));
 
         // ===== 5. Register Baskets =====
         _registerBaskets();
@@ -128,26 +128,26 @@ contract DeployAll is Script {
             0 // Classic
         );
 
-        // ----- INDXR-AI: AI Projects -----
-        address[] memory tokensAI = new address[](5);
-        tokensAI[0] = RENDER; // Render
-        tokensAI[1] = FET;    // Fetch.ai
-        tokensAI[2] = OCEAN;  // Ocean Protocol
-        tokensAI[3] = AGIX;   // SingularityNET
-        tokensAI[4] = TAO;    // Bittensor
+        // ----- INDXR-BAE: MVP thematic basket -----
+        address[] memory tokensBAE = new address[](5);
+        tokensBAE[0] = RENDER; // Render
+        tokensBAE[1] = FET;    // Fetch.ai
+        tokensBAE[2] = OCEAN;  // Ocean Protocol
+        tokensBAE[3] = AGIX;   // SingularityNET
+        tokensBAE[4] = TAO;    // Bittensor
 
-        uint256[] memory weightsAI = new uint256[](5);
-        weightsAI[0] = 2500;  // 25%
-        weightsAI[1] = 2500;  // 25%
-        weightsAI[2] = 2000;  // 20%
-        weightsAI[3] = 1500;  // 15%
-        weightsAI[4] = 1500;  // 15%
+        uint256[] memory weightsBAE = new uint256[](5);
+        weightsBAE[0] = 2500;  // 25%
+        weightsBAE[1] = 2500;  // 25%
+        weightsBAE[2] = 2000;  // 20%
+        weightsBAE[3] = 1500;  // 15%
+        weightsBAE[4] = 1500;  // 15%
 
         registry.registerBasket(
-            "INDXR-AI",
-            address(indxrAIVault),
-            tokensAI,
-            weightsAI,
+            "INDXR-BAE",
+            address(indxrBAEVault),
+            tokensBAE,
+            weightsBAE,
             1 // Thematic
         );
     }
@@ -164,7 +164,7 @@ contract DeployAll is Script {
         console.log("NEXT_PUBLIC_USDC_ADDRESS=", address(usdc));
         console.log("NEXT_PUBLIC_REGISTRY_ADDRESS=", address(registry));
         console.log("NEXT_PUBLIC_INDXR10_VAULT=", address(indxr10Vault));
-        console.log("NEXT_PUBLIC_INDXRAI_VAULT=", address(indxrAIVault));
+        console.log("NEXT_PUBLIC_INDXRBAE_VAULT=", address(indxrBAEVault));
         console.log("");
         console.log("===========================================");
         console.log("");

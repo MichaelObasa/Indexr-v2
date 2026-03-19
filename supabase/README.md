@@ -33,8 +33,8 @@ SET vault_address = '0xYOUR_INDXR10_VAULT_ADDRESS'
 WHERE id = 'INDXR-10';
 
 UPDATE baskets 
-SET vault_address = '0xYOUR_INDXRAI_VAULT_ADDRESS' 
-WHERE id = 'INDXR-AI';
+SET vault_address = '0xYOUR_INDXRBAE_VAULT_ADDRESS' 
+WHERE id = 'INDXR-BAE';
 ```
 
 ## Database Schema
