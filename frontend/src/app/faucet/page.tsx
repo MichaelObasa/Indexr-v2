@@ -1,25 +1,29 @@
 "use client";
 
+import { useEffect } from "react";
 import { useAccount, useWriteContract, useReadContract, useWaitForTransactionReceipt } from "wagmi";
 import { Droplets, Wallet } from "lucide-react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import toast from "react-hot-toast";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { getContracts, USDC_ABI } from "@/lib/contracts";
+import { getContracts, isConfiguredAddress, isSupportedChain, USDC_ABI, ZERO_ADDRESS } from "@/lib/contracts";
 import { formatUSDC } from "@/lib/utils";
 
 export default function FaucetPage() {
   const { address, isConnected, chainId } = useAccount();
   const contracts = getContracts(chainId);
+  const usdcAddress = isConfiguredAddress(contracts.USDC) ? contracts.USDC : ZERO_ADDRESS;
+  const isCorrectChain = isSupportedChain(chainId);
+  const hasConfiguredUsdc = isConfiguredAddress(contracts.USDC);
 
   // Read USDC balance
   const { data: balance, refetch } = useReadContract({
-    address: contracts.USDC as `0x${string}`,
+    address: usdcAddress,
     abi: USDC_ABI,
     functionName: "balanceOf",
     args: address ? [address] : undefined,
-    query: { enabled: Boolean(address) },
+    query: { enabled: Boolean(address && isCorrectChain && hasConfiguredUsdc) },
   });
 
   // Faucet transaction
@@ -30,18 +34,26 @@ export default function FaucetPage() {
   });
 
   const handleFaucet = () => {
+    if (!isCorrectChain || !hasConfiguredUsdc) {
+      return;
+    }
+
     writeContract({
-      address: contracts.USDC as `0x${string}`,
+      address: usdcAddress,
       abi: USDC_ABI,
       functionName: "faucet",
     });
     toast.success("Faucet request submitted!");
   };
 
-  if (isSuccess) {
+  useEffect(() => {
+    if (!isSuccess) {
+      return;
+    }
+
     toast.success("Received 10,000 USDC!");
     refetch();
-  }
+  }, [isSuccess, refetch]);
 
   if (!isConnected) {
     return (
@@ -77,6 +89,22 @@ export default function FaucetPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
+          {!isCorrectChain && (
+            <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4 dark:border-yellow-900 dark:bg-yellow-900/20">
+              <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                Switch your wallet to Arbitrum Sepolia to mint test USDC.
+              </p>
+            </div>
+          )}
+
+          {!hasConfiguredUsdc && (
+            <div className="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-900 dark:bg-red-900/20">
+              <p className="text-sm text-red-800 dark:text-red-200">
+                Faucet is unavailable until `NEXT_PUBLIC_USDC_ADDRESS` points to the deployed MockUSDC contract with `faucet()`.
+              </p>
+            </div>
+          )}
+
           <div className="rounded-lg bg-surface-100 p-4 dark:bg-surface-800">
             <p className="text-sm text-surface-500 dark:text-surface-400">
               Current Balance
@@ -89,6 +117,7 @@ export default function FaucetPage() {
           <Button
             onClick={handleFaucet}
             isLoading={isPending || isWaiting}
+            disabled={!isCorrectChain || !hasConfiguredUsdc}
             className="w-full"
             size="lg"
             variant="accent"

@@ -1,12 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAccount, useWriteContract, useReadContract, useWaitForTransactionReceipt } from "wagmi";
 import toast from "react-hot-toast";
 import { parseUnits, formatUnits } from "viem";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { getContracts, USDC_ABI, BASKET_VAULT_ABI } from "@/lib/contracts";
+import {
+  BASKET_VAULT_ABI,
+  getContracts,
+  getRequiredVaultEnvVar,
+  isConfiguredAddress,
+  isSupportedBasketId,
+  isSupportedChain,
+  USDC_ABI,
+  ZERO_ADDRESS,
+} from "@/lib/contracts";
 import { formatUSDC } from "@/lib/utils";
 
 interface DepositFormProps {
@@ -21,23 +30,31 @@ export function DepositForm({ basketId, vaultAddress, onSuccess }: DepositFormPr
   const [step, setStep] = useState<"input" | "approve" | "deposit">("input");
   
   const contracts = getContracts(chainId);
+  const isCorrectChain = isSupportedChain(chainId);
+  const hasConfiguredUsdc = isConfiguredAddress(contracts.USDC);
+  const hasConfiguredVault = isConfiguredAddress(vaultAddress);
+  const usdcAddress = hasConfiguredUsdc ? contracts.USDC : ZERO_ADDRESS;
+  const safeVaultAddress = hasConfiguredVault ? vaultAddress : ZERO_ADDRESS;
+  const missingVaultEnvVar = isSupportedBasketId(basketId)
+    ? getRequiredVaultEnvVar(basketId)
+    : "NEXT_PUBLIC_INDXR10_VAULT";
 
   // Read USDC balance
   const { data: usdcBalance } = useReadContract({
-    address: contracts.USDC as `0x${string}`,
+    address: usdcAddress,
     abi: USDC_ABI,
     functionName: "balanceOf",
     args: address ? [address] : undefined,
-    query: { enabled: Boolean(address) },
+    query: { enabled: Boolean(address && isCorrectChain && hasConfiguredUsdc) },
   });
 
   // Read USDC allowance
   const { data: allowance, refetch: refetchAllowance } = useReadContract({
-    address: contracts.USDC as `0x${string}`,
+    address: usdcAddress,
     abi: USDC_ABI,
     functionName: "allowance",
-    args: address ? [address, vaultAddress as `0x${string}`] : undefined,
-    query: { enabled: Boolean(address && vaultAddress) },
+    args: address ? [address, safeVaultAddress] : undefined,
+    query: { enabled: Boolean(address && isCorrectChain && hasConfiguredUsdc && hasConfiguredVault) },
   });
 
   // Approve USDC
@@ -60,15 +77,15 @@ export function DepositForm({ basketId, vaultAddress, onSuccess }: DepositFormPr
   const hasBalance = usdcBalance !== undefined && amountBigInt <= usdcBalance;
 
   const handleApprove = async () => {
-    if (!amountBigInt) return;
+    if (!amountBigInt || !isCorrectChain || !hasConfiguredUsdc || !hasConfiguredVault) return;
     
     try {
       setStep("approve");
       approve({
-        address: contracts.USDC as `0x${string}`,
+        address: usdcAddress,
         abi: USDC_ABI,
         functionName: "approve",
-        args: [vaultAddress as `0x${string}`, amountBigInt],
+        args: [safeVaultAddress, amountBigInt],
       });
       toast.success("Approval submitted!");
     } catch (error) {
@@ -79,12 +96,12 @@ export function DepositForm({ basketId, vaultAddress, onSuccess }: DepositFormPr
   };
 
   const handleDeposit = async () => {
-    if (!amountBigInt || !address) return;
+    if (!amountBigInt || !address || !isCorrectChain || !hasConfiguredUsdc || !hasConfiguredVault) return;
 
     try {
       setStep("deposit");
       deposit({
-        address: vaultAddress as `0x${string}`,
+        address: safeVaultAddress,
         abi: BASKET_VAULT_ABI,
         functionName: "deposit",
         args: [amountBigInt, address],
@@ -97,25 +114,51 @@ export function DepositForm({ basketId, vaultAddress, onSuccess }: DepositFormPr
     }
   };
 
-  // Handle successful deposit
-  if (depositSuccess) {
+  useEffect(() => {
+    if (!depositSuccess) {
+      return;
+    }
+
     toast.success(`Successfully deposited ${amount} USDC into ${basketId}!`);
     setAmount("");
     setStep("input");
     onSuccess?.();
-  }
+  }, [amount, basketId, depositSuccess, onSuccess]);
 
-  // Refetch allowance after approval
-  if (approveHash && !isWaitingApprove && step === "approve") {
+  useEffect(() => {
+    if (!approveHash || isWaitingApprove || step !== "approve") {
+      return;
+    }
+
     refetchAllowance();
     setStep("input");
-  }
+  }, [approveHash, isWaitingApprove, refetchAllowance, step]);
 
   if (!isConnected) {
     return (
       <div className="rounded-lg border border-surface-200 bg-surface-50 p-6 text-center dark:border-surface-700 dark:bg-surface-800/50">
         <p className="text-surface-600 dark:text-surface-400">
           Connect your wallet to deposit
+        </p>
+      </div>
+    );
+  }
+
+  if (!isCorrectChain) {
+    return (
+      <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4 dark:border-yellow-900 dark:bg-yellow-900/20">
+        <p className="text-sm text-yellow-800 dark:text-yellow-200">
+          Switch your wallet to Arbitrum Sepolia to deposit into this vault.
+        </p>
+      </div>
+    );
+  }
+
+  if (!hasConfiguredUsdc || !hasConfiguredVault) {
+    return (
+      <div className="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-900 dark:bg-red-900/20">
+        <p className="text-sm text-red-800 dark:text-red-200">
+          Deposits are disabled until Sepolia contract addresses are configured. Set `NEXT_PUBLIC_USDC_ADDRESS` and `{missingVaultEnvVar}`.
         </p>
       </div>
     );

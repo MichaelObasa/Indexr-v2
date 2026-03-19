@@ -1,12 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAccount, useWriteContract, useReadContract, useWaitForTransactionReceipt } from "wagmi";
 import toast from "react-hot-toast";
 import { parseUnits, formatUnits } from "viem";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { BASKET_VAULT_ABI } from "@/lib/contracts";
+import {
+  BASKET_VAULT_ABI,
+  getRequiredVaultEnvVar,
+  isConfiguredAddress,
+  isSupportedBasketId,
+  isSupportedChain,
+  ZERO_ADDRESS,
+} from "@/lib/contracts";
 import { formatTokenAmount, formatUSDC } from "@/lib/utils";
 
 interface WithdrawFormProps {
@@ -17,34 +24,41 @@ interface WithdrawFormProps {
 }
 
 export function WithdrawForm({ basketId, vaultAddress, vaultSymbol = "SHARES", onSuccess }: WithdrawFormProps) {
-  const { address, isConnected } = useAccount();
+  const { address, isConnected, chainId } = useAccount();
   const [shares, setShares] = useState("");
+  const isCorrectChain = isSupportedChain(chainId);
+  const hasConfiguredVault = isConfiguredAddress(vaultAddress);
+  const safeVaultAddress = hasConfiguredVault ? vaultAddress : ZERO_ADDRESS;
+  const missingVaultEnvVar = isSupportedBasketId(basketId)
+    ? getRequiredVaultEnvVar(basketId)
+    : "NEXT_PUBLIC_INDXR10_VAULT";
 
   // Read vault share balance
   const { data: shareBalance, refetch: refetchShares } = useReadContract({
-    address: vaultAddress as `0x${string}`,
+    address: safeVaultAddress,
     abi: BASKET_VAULT_ABI,
     functionName: "balanceOf",
     args: address ? [address] : undefined,
-    query: { enabled: Boolean(address) },
+    query: { enabled: Boolean(address && isCorrectChain && hasConfiguredVault) },
   });
 
   // Read vault decimals
   const { data: decimals } = useReadContract({
-    address: vaultAddress as `0x${string}`,
+    address: safeVaultAddress,
     abi: BASKET_VAULT_ABI,
     functionName: "decimals",
+    query: { enabled: isCorrectChain && hasConfiguredVault },
   });
 
   // Convert shares to assets (preview)
   const sharesBigInt = shares && decimals ? parseUnits(shares, decimals as number) : 0n;
   
   const { data: assetsPreview } = useReadContract({
-    address: vaultAddress as `0x${string}`,
+    address: safeVaultAddress,
     abi: BASKET_VAULT_ABI,
     functionName: "convertToAssets",
     args: sharesBigInt ? [sharesBigInt] : undefined,
-    query: { enabled: Boolean(sharesBigInt) },
+    query: { enabled: Boolean(sharesBigInt && isCorrectChain && hasConfiguredVault) },
   });
 
   // Redeem
@@ -57,11 +71,11 @@ export function WithdrawForm({ basketId, vaultAddress, vaultSymbol = "SHARES", o
   const hasShares = shareBalance !== undefined && sharesBigInt > 0n && sharesBigInt <= shareBalance;
 
   const handleRedeem = async () => {
-    if (!sharesBigInt || !address) return;
+    if (!sharesBigInt || !address || !isCorrectChain || !hasConfiguredVault) return;
 
     try {
       redeem({
-        address: vaultAddress as `0x${string}`,
+        address: safeVaultAddress,
         abi: BASKET_VAULT_ABI,
         functionName: "redeem",
         args: [sharesBigInt, address, address],
@@ -73,19 +87,42 @@ export function WithdrawForm({ basketId, vaultAddress, vaultSymbol = "SHARES", o
     }
   };
 
-  // Handle successful redeem
-  if (redeemSuccess) {
+  useEffect(() => {
+    if (!redeemSuccess) {
+      return;
+    }
+
     toast.success(`Successfully withdrew from ${basketId}!`);
     setShares("");
     refetchShares();
     onSuccess?.();
-  }
+  }, [basketId, onSuccess, redeemSuccess, refetchShares]);
 
   if (!isConnected) {
     return (
       <div className="rounded-lg border border-surface-200 bg-surface-50 p-6 text-center dark:border-surface-700 dark:bg-surface-800/50">
         <p className="text-surface-600 dark:text-surface-400">
           Connect your wallet to withdraw
+        </p>
+      </div>
+    );
+  }
+
+  if (!isCorrectChain) {
+    return (
+      <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4 dark:border-yellow-900 dark:bg-yellow-900/20">
+        <p className="text-sm text-yellow-800 dark:text-yellow-200">
+          Switch your wallet to Arbitrum Sepolia to withdraw from this vault.
+        </p>
+      </div>
+    );
+  }
+
+  if (!hasConfiguredVault) {
+    return (
+      <div className="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-900 dark:bg-red-900/20">
+        <p className="text-sm text-red-800 dark:text-red-200">
+          Withdrawals are disabled until `{missingVaultEnvVar}` points to the deployed Sepolia vault.
         </p>
       </div>
     );

@@ -1,23 +1,59 @@
+export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000" as const;
+export const SUPPORTED_CHAIN_ID = 421614;
+export const SUPPORTED_BASKET_IDS = ["INDXR-10", "INDXR-BAE"] as const;
+
+export type SupportedBasketId = (typeof SUPPORTED_BASKET_IDS)[number];
+
 // Contract addresses - UPDATE AFTER DEPLOYMENT
 export const CONTRACTS = {
   // Arbitrum Sepolia (Chain ID: 421614)
-  421614: {
-    USDC: process.env.NEXT_PUBLIC_USDC_ADDRESS || "0x0000000000000000000000000000000000000000",
-    REGISTRY: process.env.NEXT_PUBLIC_REGISTRY_ADDRESS || "0x0000000000000000000000000000000000000000",
-    ECHOPAY: process.env.NEXT_PUBLIC_ECHOPAY_ADDRESS || "0x0000000000000000000000000000000000000000",
+  [SUPPORTED_CHAIN_ID]: {
+    USDC: process.env.NEXT_PUBLIC_USDC_ADDRESS || ZERO_ADDRESS,
+    REGISTRY: process.env.NEXT_PUBLIC_REGISTRY_ADDRESS || ZERO_ADDRESS,
+    ECHOPAY: process.env.NEXT_PUBLIC_ECHOPAY_ADDRESS || ZERO_ADDRESS,
     VAULTS: {
-      "INDXR-10": process.env.NEXT_PUBLIC_INDXR10_VAULT || "0x0000000000000000000000000000000000000000",
-      "INDXR-BAE": process.env.NEXT_PUBLIC_INDXRBAE_VAULT || "0x0000000000000000000000000000000000000000",
+      "INDXR-10": process.env.NEXT_PUBLIC_INDXR10_VAULT || ZERO_ADDRESS,
+      "INDXR-BAE": process.env.NEXT_PUBLIC_INDXRBAE_VAULT || ZERO_ADDRESS,
     },
   },
 } as const;
 
 // Default to Arbitrum Sepolia
-export const DEFAULT_CHAIN_ID = 421614;
+export const DEFAULT_CHAIN_ID = SUPPORTED_CHAIN_ID;
 
 // Get contracts for current chain
 export function getContracts(chainId: number = DEFAULT_CHAIN_ID) {
-  return CONTRACTS[chainId as keyof typeof CONTRACTS] || CONTRACTS[421614];
+  return CONTRACTS[chainId as keyof typeof CONTRACTS] || CONTRACTS[SUPPORTED_CHAIN_ID];
+}
+
+export function isSupportedChain(chainId?: number): chainId is typeof SUPPORTED_CHAIN_ID {
+  return chainId === SUPPORTED_CHAIN_ID;
+}
+
+export function isSupportedBasketId(basketId: string): basketId is SupportedBasketId {
+  return (SUPPORTED_BASKET_IDS as readonly string[]).includes(basketId);
+}
+
+export function isZeroAddress(address?: string | null) {
+  return !address || address.toLowerCase() === ZERO_ADDRESS;
+}
+
+export function isConfiguredAddress(address?: string | null): address is `0x${string}` {
+  return Boolean(address) && /^0x[a-fA-F0-9]{40}$/.test(address) && !isZeroAddress(address);
+}
+
+export function getConfiguredVaultAddress(
+  basketId: SupportedBasketId,
+  chainId: number = DEFAULT_CHAIN_ID
+) {
+  const vaultAddress = getContracts(chainId).VAULTS[basketId];
+  return isConfiguredAddress(vaultAddress) ? vaultAddress : null;
+}
+
+export function getRequiredVaultEnvVar(basketId: SupportedBasketId) {
+  return basketId === "INDXR-10"
+    ? "NEXT_PUBLIC_INDXR10_VAULT"
+    : "NEXT_PUBLIC_INDXRBAE_VAULT";
 }
 
 // ABI Fragments for contract interactions

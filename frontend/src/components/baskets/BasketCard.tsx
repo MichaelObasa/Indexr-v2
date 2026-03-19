@@ -5,6 +5,7 @@ import { ArrowRight, TrendingUp } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { isConfiguredAddress } from "@/lib/contracts";
 import { Basket } from "@/lib/supabase";
 import { formatUSDC, getCategoryLabel, getRiskBadgeColor, formatWeight } from "@/lib/utils";
 
@@ -14,6 +15,7 @@ interface BasketCardProps {
 
 export function BasketCard({ basket }: BasketCardProps) {
   const topTokens = basket.tokens.slice(0, 3);
+  const isLive = isConfiguredAddress(basket.vault_address);
 
   return (
     <Card className="group relative overflow-hidden transition-all hover:shadow-lg hover:border-primary-200 dark:hover:border-primary-800">
@@ -42,10 +44,14 @@ export function BasketCard({ basket }: BasketCardProps) {
           <span className="text-surface-500 dark:text-surface-400">
             {getCategoryLabel(basket.category)}
           </span>
-          <div className="flex items-center space-x-1 text-surface-600 dark:text-surface-300">
-            <TrendingUp className="h-4 w-4" />
-            <span>TVL: {formatUSDC(basket.tvl_usdc * 1e6)}</span>
-          </div>
+          {isLive ? (
+            <div className="flex items-center space-x-1 text-surface-600 dark:text-surface-300">
+              <TrendingUp className="h-4 w-4" />
+              <span>TVL: {formatUSDC(basket.tvl_usdc * 1e6)}</span>
+            </div>
+          ) : (
+            <Badge variant="secondary">Deployment pending</Badge>
+          )}
         </div>
 
         {/* Token Composition */}
@@ -99,12 +105,18 @@ export function BasketCard({ basket }: BasketCardProps) {
         </div>
 
         {/* Action */}
-        <Link href={`/baskets/${basket.id}`}>
-          <Button variant="outline" className="w-full group-hover:border-primary-500 group-hover:text-primary-500">
-            View Basket
-            <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+        {isLive ? (
+          <Link href={`/baskets/${basket.id}`}>
+            <Button variant="outline" className="w-full group-hover:border-primary-500 group-hover:text-primary-500">
+              View Basket
+              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </Button>
+          </Link>
+        ) : (
+          <Button variant="outline" className="w-full" disabled>
+            Sepolia Deployment Required
           </Button>
-        </Link>
+        )}
       </CardContent>
     </Card>
   );

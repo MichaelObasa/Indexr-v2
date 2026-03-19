@@ -1,4 +1,13 @@
 import { createClient } from "@supabase/supabase-js";
+import {
+  DEFAULT_CHAIN_ID,
+  getConfiguredVaultAddress,
+  isConfiguredAddress,
+  isSupportedBasketId,
+  SUPPORTED_BASKET_IDS,
+  type SupportedBasketId,
+  ZERO_ADDRESS,
+} from "@/lib/contracts";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -30,6 +39,45 @@ export interface Basket {
   created_at: string;
   updated_at: string;
 }
+
+const FALLBACK_BASKET_METADATA: Record<SupportedBasketId, Omit<Basket, "vault_address">> = {
+  "INDXR-10": {
+    id: "INDXR-10",
+    name: "Indexr Top 10",
+    description: "Top 10 cryptocurrencies by market capitalization",
+    category: "classic",
+    risk_level: "medium",
+    tokens: [
+      { symbol: "WBTC", name: "Wrapped Bitcoin", weight: 3500 },
+      { symbol: "WETH", name: "Wrapped Ether", weight: 3000 },
+      { symbol: "ARB", name: "Arbitrum", weight: 1500 },
+      { symbol: "LINK", name: "Chainlink", weight: 1000 },
+      { symbol: "UNI", name: "Uniswap", weight: 1000 },
+    ],
+    active: true,
+    tvl_usdc: 0,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+  "INDXR-BAE": {
+    id: "INDXR-BAE",
+    name: "Indexr BAE",
+    description: "Placeholder BAE basket metadata for Arbitrum Sepolia MVP testing",
+    category: "thematic",
+    risk_level: "high",
+    tokens: [
+      { symbol: "RENDER", name: "Render Network", weight: 2500 },
+      { symbol: "FET", name: "Fetch.ai", weight: 2500 },
+      { symbol: "OCEAN", name: "Ocean Protocol", weight: 2000 },
+      { symbol: "AGIX", name: "SingularityNET", weight: 1500 },
+      { symbol: "TAO", name: "Bittensor", weight: 1500 },
+    ],
+    active: true,
+    tvl_usdc: 0,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+};
 
 export interface EchoPlan {
   id: string;
@@ -76,10 +124,14 @@ export async function getBaskets(): Promise<Basket[]> {
     return getMockBaskets();
   }
 
-  return data || [];
+  return normalizeBaskets(data || []);
 }
 
 export async function getBasketById(id: string): Promise<Basket | null> {
+  if (!isSupportedBasketId(id)) {
+    return null;
+  }
+
   if (!supabase) {
     return getMockBaskets().find((b) => b.id === id) || null;
   }
@@ -92,10 +144,10 @@ export async function getBasketById(id: string): Promise<Basket | null> {
 
   if (error) {
     console.error("Error fetching basket:", error);
-    return null;
+    return getMockBaskets().find((basket) => basket.id === id) || null;
   }
 
-  return data;
+  return normalizeBasket(data);
 }
 
 export async function getPlansForWallet(walletAddress: string): Promise<EchoPlan[]> {
@@ -193,52 +245,43 @@ export async function markNotificationRead(notificationId: string): Promise<bool
 
 // Mock data for development without Supabase
 function getMockBaskets(): Basket[] {
-  const indxr10Vault =
-    process.env.NEXT_PUBLIC_INDXR10_VAULT ||
-    "0x0000000000000000000000000000000000000000";
-  const indxrBaeVault =
-    process.env.NEXT_PUBLIC_INDXRBAE_VAULT ||
-    "0x0000000000000000000000000000000000000000";
+  return SUPPORTED_BASKET_IDS.map((basketId) => buildBasket(basketId));
+}
 
-  return [
-    {
-      id: "INDXR-10",
-      name: "Indexr Top 10",
-      description: "Top 10 cryptocurrencies by market capitalization",
-      vault_address: indxr10Vault,
-      category: "classic",
-      risk_level: "medium",
-      tokens: [
-        { symbol: "WBTC", name: "Wrapped Bitcoin", weight: 3500 },
-        { symbol: "WETH", name: "Wrapped Ether", weight: 3000 },
-        { symbol: "ARB", name: "Arbitrum", weight: 1500 },
-        { symbol: "LINK", name: "Chainlink", weight: 1000 },
-        { symbol: "UNI", name: "Uniswap", weight: 1000 },
-      ],
-      active: true,
-      tvl_usdc: 0,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    },
-    {
-      id: "INDXR-BAE",
-      name: "Indexr BAE",
-      description: "Placeholder BAE basket metadata for Arbitrum Sepolia MVP testing",
-      vault_address: indxrBaeVault,
-      category: "thematic",
-      risk_level: "high",
-      tokens: [
-        { symbol: "RENDER", name: "Render Network", weight: 2500 },
-        { symbol: "FET", name: "Fetch.ai", weight: 2500 },
-        { symbol: "OCEAN", name: "Ocean Protocol", weight: 2000 },
-        { symbol: "AGIX", name: "SingularityNET", weight: 1500 },
-        { symbol: "TAO", name: "Bittensor", weight: 1500 },
-      ],
-      active: true,
-      tvl_usdc: 0,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    },
-  ];
+function normalizeBaskets(rows: Basket[]): Basket[] {
+  const baskets = rows
+    .map((row) => normalizeBasket(row))
+    .filter((basket): basket is Basket => basket !== null)
+    .filter((basket) => basket.active);
+
+  if (baskets.length > 0) {
+    return baskets.sort(
+      (left, right) => SUPPORTED_BASKET_IDS.indexOf(left.id as SupportedBasketId) - SUPPORTED_BASKET_IDS.indexOf(right.id as SupportedBasketId)
+    );
+  }
+
+  return getMockBaskets();
+}
+
+function normalizeBasket(row: Basket | null): Basket | null {
+  if (!row || !isSupportedBasketId(row.id)) {
+    return null;
+  }
+
+  const fallback = buildBasket(row.id);
+  const dbVaultAddress = isConfiguredAddress(row.vault_address) ? row.vault_address : fallback.vault_address;
+
+  return {
+    ...fallback,
+    ...row,
+    vault_address: getConfiguredVaultAddress(row.id, DEFAULT_CHAIN_ID) || dbVaultAddress,
+  };
+}
+
+function buildBasket(basketId: SupportedBasketId): Basket {
+  return {
+    ...FALLBACK_BASKET_METADATA[basketId],
+    vault_address: getConfiguredVaultAddress(basketId, DEFAULT_CHAIN_ID) || ZERO_ADDRESS,
+  };
 }
 

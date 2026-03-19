@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { getBaskets, Basket } from "@/lib/supabase";
-import { getContracts, BASKET_VAULT_ABI } from "@/lib/contracts";
+import { BASKET_VAULT_ABI, getContracts, isConfiguredAddress } from "@/lib/contracts";
 import { formatUSDC, formatTokenAmount, formatAddress } from "@/lib/utils";
 
 interface Position {
@@ -35,9 +35,15 @@ export default function DashboardPage() {
   }, []);
 
   // Read balances from all vaults
-  const vaultAddresses = baskets.map(
-    (b) => b.vault_address || contracts.VAULTS[b.id as keyof typeof contracts.VAULTS]
-  ).filter(Boolean);
+  const liveBaskets = baskets.filter((basket) =>
+    isConfiguredAddress(
+      basket.vault_address || contracts.VAULTS[basket.id as keyof typeof contracts.VAULTS]
+    )
+  );
+
+  const vaultAddresses = liveBaskets.map(
+    (basket) => (basket.vault_address || contracts.VAULTS[basket.id as keyof typeof contracts.VAULTS]) as `0x${string}`
+  );
 
   const { data: balanceResults } = useReadContracts({
     contracts: vaultAddresses.flatMap((vault) => [
@@ -58,7 +64,7 @@ export default function DashboardPage() {
   });
 
   // Calculate positions
-  const positions: Position[] = baskets
+  const positions: Position[] = liveBaskets
     .map((basket, index) => {
       const balanceIndex = index * 2;
       const priceIndex = index * 2 + 1;
@@ -120,6 +126,14 @@ export default function DashboardPage() {
           </Button>
         </Link>
       </div>
+
+      {baskets.length > liveBaskets.length && (
+        <div className="mb-6 rounded-lg border border-yellow-200 bg-yellow-50 p-4 dark:border-yellow-900 dark:bg-yellow-900/20">
+          <p className="text-sm text-yellow-800 dark:text-yellow-200">
+            Some MVP baskets are hidden from portfolio reads until their Sepolia vault addresses are configured.
+          </p>
+        </div>
+      )}
 
       {/* Portfolio Summary */}
       <div className="mb-8 grid gap-6 sm:grid-cols-3">

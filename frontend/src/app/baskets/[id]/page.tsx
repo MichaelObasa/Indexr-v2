@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/Button";
 import { DepositForm } from "@/components/baskets/DepositForm";
 import { WithdrawForm } from "@/components/baskets/WithdrawForm";
 import { getBasketById, Basket } from "@/lib/supabase";
-import { getContracts, BASKET_VAULT_ABI } from "@/lib/contracts";
+import { BASKET_VAULT_ABI, getContracts, isConfiguredAddress, isSupportedBasketId, ZERO_ADDRESS } from "@/lib/contracts";
 import {
   formatUSDC,
   formatWeight,
@@ -30,36 +30,38 @@ export default function BasketDetailPage() {
 
   const contracts = getContracts(chainId);
   const vaultAddress = basket?.vault_address || contracts.VAULTS[basketId as keyof typeof contracts.VAULTS];
+  const safeVaultAddress = isConfiguredAddress(vaultAddress) ? vaultAddress : ZERO_ADDRESS;
+  const isLiveVault = isConfiguredAddress(vaultAddress);
 
   // Read vault data
   const { data: totalAssets, refetch: refetchAssets } = useReadContract({
-    address: vaultAddress as `0x${string}`,
+    address: safeVaultAddress,
     abi: BASKET_VAULT_ABI,
     functionName: "totalAssets",
-    query: { enabled: Boolean(vaultAddress) },
+    query: { enabled: isLiveVault },
   });
 
   const { data: userShares, refetch: refetchShares } = useReadContract({
-    address: vaultAddress as `0x${string}`,
+    address: safeVaultAddress,
     abi: BASKET_VAULT_ABI,
     functionName: "balanceOf",
     args: address ? [address] : undefined,
-    query: { enabled: Boolean(vaultAddress && address) },
+    query: { enabled: Boolean(isLiveVault && address) },
   });
 
   const { data: userAssets } = useReadContract({
-    address: vaultAddress as `0x${string}`,
+    address: safeVaultAddress,
     abi: BASKET_VAULT_ABI,
     functionName: "convertToAssets",
     args: userShares ? [userShares] : undefined,
-    query: { enabled: Boolean(userShares && userShares > 0n) },
+    query: { enabled: Boolean(isLiveVault && userShares && userShares > 0n) },
   });
 
   const { data: vaultSymbol } = useReadContract({
-    address: vaultAddress as `0x${string}`,
+    address: safeVaultAddress,
     abi: BASKET_VAULT_ABI,
     functionName: "symbol",
-    query: { enabled: Boolean(vaultAddress) },
+    query: { enabled: isLiveVault },
   });
 
   useEffect(() => {
@@ -82,6 +84,26 @@ export default function BasketDetailPage() {
         <div className="animate-pulse space-y-8">
           <div className="h-8 w-64 rounded bg-surface-200 dark:bg-surface-800" />
           <div className="h-64 rounded-xl bg-surface-200 dark:bg-surface-800" />
+        </div>
+      </div>
+    );
+  }
+
+  if (!isSupportedBasketId(basketId)) {
+    return (
+      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-surface-900 dark:text-white">
+            Basket not available
+          </h1>
+          <p className="mt-2 text-surface-500 dark:text-surface-400">
+            Indexr MVP on Arbitrum Sepolia currently supports only INDXR-10 and INDXR-BAE.
+          </p>
+          <Link href="/baskets">
+            <Button variant="outline" className="mt-4">
+              Back to Baskets
+            </Button>
+          </Link>
         </div>
       </div>
     );
@@ -182,6 +204,16 @@ export default function BasketDetailPage() {
               </CardContent>
             </Card>
           </div>
+
+          {!isLiveVault && (
+            <Card className="border-yellow-200 bg-yellow-50 dark:border-yellow-900 dark:bg-yellow-900/20">
+              <CardContent className="p-4">
+                <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                  This basket is in the MVP catalog, but its Sepolia vault address is not configured yet. Set the matching `NEXT_PUBLIC_*_VAULT` env var before enabling deposits or withdrawals.
+                </p>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Composition */}
           <Card>
