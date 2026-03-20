@@ -4,7 +4,7 @@ globs: ["**/*"]
 alwaysApply: true
 ---
 
-Indexr is currently in MVP crunch mode for YC Summer 2026.
+Indexr is currently in MVP crunch mode ahead of YC Summer 2026.
 
 Current product scope:
 - Chain: Arbitrum only
