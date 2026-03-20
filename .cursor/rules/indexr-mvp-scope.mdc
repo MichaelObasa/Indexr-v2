@@ -10,7 +10,7 @@ Current product scope:
 - Chain: Arbitrum only
 - Launch funds: INDXR-BAE and INDXR-10 only
 - Product: simple, rules-based, non-custodial crypto index investing
-- Priority: guarded beta with real deposits, clear safety controls, and simple UX
+- Priority: guarded beta with real deposits, clear safety controls, and a simple UX for the end user
 
 In scope:
 - contract deployment
