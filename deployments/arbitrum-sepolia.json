@@ -1,32 +1,32 @@
 {
   "network": "arbitrum-sepolia",
   "chainId": 421614, 
-  "deployedAt": "",
+  "deployedAt": "2026-03-21T23:48:06.5600708+00:00",
   "deployer": "",
   "contracts": {
     "MockUSDC": {
-      "address": "",
-      "deployedAt": ""
+      "address": "0x20E946ea187092b2D8BdaaAD9aEE49A04cABDA78",
+      "deployedAt": "2026-03-21T23:48:06.5600708+00:00"
     },
     "BasketRegistry": {
-      "address": "",
-      "deployedAt": ""
+      "address": "0xdDB038fF9cb7c048c9d148A73F9b623AB0418495",
+      "deployedAt": "2026-03-21T23:48:06.5600708+00:00"
     },
     "INDXR10Vault": {
-      "address": "",
+      "address": "0x21B682C61446042EFC3d02AdD3611486942b1C97",
       "basketId": "INDXR-10",
       "name": "Indexr Top 10 Vault",
       "symbol": "INDXR10",
       "category": "classic",
-      "deployedAt": ""
+      "deployedAt": "2026-03-21T23:48:06.5600708+00:00"
     },
     "INDXRBAEVault": {
-      "address": "",
+      "address": "0xaa2E39DD30FCCFDf2854C8d6A1FE42275B50Ce36",
       "basketId": "INDXR-BAE",
       "name": "Indexr BAE Vault",
       "symbol": "INDXRBAE",
       "category": "thematic",
-      "deployedAt": ""
+      "deployedAt": "2026-03-21T23:48:06.5600708+00:00"
     },
     "EchoPayPuller": {
       "address": "",
