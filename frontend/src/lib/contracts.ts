@@ -39,7 +39,11 @@ export function isZeroAddress(address?: string | null) {
 }
 
 export function isConfiguredAddress(address?: string | null): address is `0x${string}` {
-  return Boolean(address) && /^0x[a-fA-F0-9]{40}$/.test(address) && !isZeroAddress(address);
+  if (!address) {
+    return false;
+  }
+
+  return /^0x[a-fA-F0-9]{40}$/.test(address) && !isZeroAddress(address);
 }
 
 export function getConfiguredVaultAddress(
