@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAccount, useWriteContract, useReadContract, useWaitForTransactionReceipt } from "wagmi";
 import { ArrowLeft, Repeat, Check } from "lucide-react";
@@ -17,7 +17,7 @@ import { formatUSDC, getNextRunDate, getFrequencySeconds } from "@/lib/utils";
 
 type Frequency = "weekly" | "biweekly" | "monthly";
 
-export default function NewPlanPage() {
+function NewPlanPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const preselectedBasket = searchParams.get("basket");
@@ -348,6 +348,14 @@ export default function NewPlanPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function NewPlanPage() {
+  return (
+    <Suspense fallback={null}>
+      <NewPlanPageContent />
+    </Suspense>
   );
 }
 
